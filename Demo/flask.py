@@ -91,7 +91,7 @@ class RoleQDemo:
         protos = []
         for role in all_roles:
             print(role)
-            proto_question = proto_dict[lemma+sense_id+role]
+            proto_question = proto_dict[lemma+sense_id+role.role_type]
             protos.append(proto_question)
             samples.append(
                 {'proto_question': proto_question, 'predicate_lemma': lemma,
