@@ -14,7 +14,7 @@ from Demo.role_lexicon.role_lexicon import RoleLexicon
 import csv
 from collections import defaultdict
 from question_translation import QuestionTranslator
-from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
+#from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 
 transformation_model_path = '/home/nlp/pyatkiv/workspace/transformers/examples/seq2seq/question_transformation_grammar_corrected_who/'
 device_number = 0
