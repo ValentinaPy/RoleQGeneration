@@ -85,7 +85,6 @@ class RoleQDemo:
 
     def get_questions(self, lemma: str, pos: str, sense_id: str, predicate_idx: int, text: str) -> List:
         all_roles = lex.get_roleset(lemma, sense_id, pos)
-        print(predicate_idx)
         predicate_span = str(predicate_idx)+':'+str(predicate_idx+1)
         questions_list = []
         samples = []
@@ -107,7 +106,6 @@ def main():
     roleqdemo = RoleQDemo()
     roleqdemo.analyze('John sold a pen to Mary.')
     roleqdemo.get_rolesets(1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], ['NOUN', 'VERB'])
-    roleqdemo.get_questions(['John', 'sell', 'a', 'pen', 'to', 'Mary'], 'sell', 1, 'v', '01')
     roleqdemo.get_questions("sell", "v", "01", 1, "John sold a pen to Mary .")
 
 if __name__ == "__main__":
