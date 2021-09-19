@@ -85,6 +85,7 @@ class RoleQDemo:
 
     def get_questions(self, lemma: str, pos: str, sense_id: str, predicate_idx: int, text: str) -> List:
         all_roles = lex.get_roleset(lemma, sense_id, pos)
+        print(predicate_idx)
         predicate_span = str(predicate_idx)+':'+str(predicate_idx+1)
         questions_list = []
         samples = []
