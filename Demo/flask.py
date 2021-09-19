@@ -90,6 +90,7 @@ class RoleQDemo:
         samples = []
         protos = []
         for role in all_roles:
+            print(role)
             proto_question = proto_dict[lemma+sense_id+role]
             protos.append(proto_question)
             samples.append(
