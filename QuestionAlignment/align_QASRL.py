@@ -1,36 +1,7 @@
-from allennlp.predictors.predictor import Predictor
 import jsonlines
 import codecs
 import re
 from collections import defaultdict
-
-def read_and_extract_qasrl_pavel_format():
-    # sentence : q : a : instance_id : a_start
-    outfile = codecs.open('extracted_qasrl_instances_pavel_format.tsv', 'w')
-    with jsonlines.open('/Users/vale/PycharmProjects/my-nrl-qasrl/data/qasrl-v2/orig/train.jsonl') as json_file:
-        for obj in json_file:
-            id = obj["sentenceId"]
-            sent = obj["sentenceTokens"]
-            for key, value in obj["verbEntries"].items():
-                verb_index = [str(key), str(int(key)+1)]
-                verb = sent[int(key)]
-                stem = value["verbInflectedForms"]["stem"]
-                for question, quest_inst in value["questionLabels"].items():
-                    answers = quest_inst["answerJudgments"]
-                    q_source = quest_inst["questionSources"][0]
-                    if "turk" in q_source:
-                        ans = []
-                        answer_indices = []
-                        for ans_instance in answers:
-                            if ans_instance["isValid"]:
-                                spans = ans_instance['spans']
-                                for span in spans:
-                                    ans.append(' '.join(sent[span[0]:span[1]]))
-                                    answer_indices.append(':'.join([str(s) for s in span]))
-                        ans = list(set(ans))
-                        outfile.write(' '.join(sent)+'\t'+question+'\t'+'~!~'.join(ans)+'\t'+'~!~'.join(answer_indices)+'\t'+id+'\t'+verb+'\t'+':'.join(verb_index)+'\t'+stem+'\t'+key+'\n')
-
-    outfile.close()
 
 def get_IOU(text1, text2):
     iou = 0
@@ -52,9 +23,9 @@ def check_for_alignment(qa_verb_index, srl_verb_index, srl_arg, qa_answer):
         else:
             return False
 
-def align_with_qasrl(pred_dict):
-    infile = codecs.open('extracted_qasrl_instances_pavel_format.tsv', 'r')
-    outfile = codecs.open('good_alignments/withSRL/aligned_qasrl_to_roles_only_args_train.tsv', 'w')
+def align_with_qasrl(pred_dict, outfile_path, infile_path):
+    infile = codecs.open(infile_path, 'r')
+    outfile = codecs.open(outfile_path, 'w')
     outfile.write('Sentence\tQASRL_question\tQASRL_answer\tQASRL_answer_indices\tQASRL_id\tQASRL_predicate\tQASRL_predicate_index\tQASRL_predicate_stem\tmodel_target\tmodel_target_token\tmodel_argument\trole\tsrl\n')
     counter = 0
     for inline in infile.readlines():
@@ -68,7 +39,6 @@ def align_with_qasrl(pred_dict):
         qa_verb_index = int(line[6].split(':')[0])
         qa_verb_index_orig = line[6]
         ID = line[4]
-        found = False
         if ID in pred_dict:
             predictions = pred_dict[ID]
             for prediction in predictions:
@@ -82,73 +52,17 @@ def align_with_qasrl(pred_dict):
                     if alignment:
                         outfile.write(
                             sent + '\t' + qa_question + '\t' + qa_answers + '\t' + qa_answer_idx + '\t' + ID + '\t' + qa_verb + '\t' + qa_verb_index_orig + '\t' + qa_verb_lemma + '\t' + str(target_verb_idx) + '\t' + target_verb_word  + '\t' + arg + '\t' + label + '\t'+ '$$$'.join(roles_out)+'\n')
-                        print(counter)
                         counter += 1
-                        found = True
-            if not found:
-                print(line)
-                print(predictions)
     outfile.close()
 
-def srl_parse_and_align_pavel_format():
-    predictor = Predictor.from_path(
-          "https://storage.googleapis.com/allennlp-public-models/bert-base-srl-2020.03.24.tar.gz", cuda_device=-1)
-    infile = codecs.open('debug.tsv', 'r')
-    outfile = codecs.open('bla.tsv', 'w')
-    outfile.write('Sentence\tQASRL_question\tQASRL_answer\tQASRL_answer_indices\tQASRL_id\tQASRL_predicate\tQASRL_predicate_index\tQASRL_predicate_stem\tmodel_target\tmodel_target_token\tmodel_argument\trole\n')
-    counter = 0
-    for inline in infile.readlines():
-        line = inline.split('\t')[:-1]
-        sent = line[0]
-        qa_verb = line[5]
-        qa_answers = line[2]
-        qa_verb_index = int(line[6].split(':')[0])
-        results = predictor.predict(sentence=sent)
-        for verb_instance in results["verbs"]:
-            srl_verb = verb_instance["verb"]
-            arg = []
-            labels = []
-            all_srl_arguments = []
-            all_srl_labels = []
-            srl_pred_index = None
-            srl_pred = ''
-            token_count = 0
-            for token, label in zip(results["words"], verb_instance["tags"]):
-                if not label.startswith('O') and '-V' not in label:
-                    if label.startswith('B'):
-                        all_srl_arguments.append(' '.join(arg))
-                        all_srl_labels.append(' '.join(labels))
-                        arg = []
-                        labels = []
-                    arg.append(token)
-                    labels.append(label)
-                if '-V' in label:
-                    srl_pred_index = token_count
-                    srl_pred = token
-                token_count += 1
-            all_srl_arguments.append(' '.join(arg))
-            all_srl_labels.append(' '.join(labels))
-            for srl_arg, labels in zip(all_srl_arguments, all_srl_labels):
-                if len(srl_arg.strip())>0:
-                    alignment = check_for_alignment(qa_verb_index, srl_pred_index, srl_arg, qa_answers)
-                    srl_label = '-'.join(labels.split(' ')[0].split('-')[1:])
-                    srl_label = re.sub('ARG', 'A', srl_label)
-                    if alignment:
-                        outfile.write(inline.strip() + '\t' + srl_verb + '\t' + srl_arg + '\t' + srl_label + '\n')
-                        counter += 1
-                        print(counter)
-                    else:
-                        print(qa_verb, srl_pred, srl_arg, ' SEP ',qa_answers, label)
-    outfile.close()
 
-def get_predicted():
+def get_predicted(srl_predictions_file_path, predict_file_path):
     #ID : args_senses
     pred_dict = defaultdict(lambda: [])
-    infile = jsonlines.open('parse_predictions/qasrl_pb_train_prediction')
-    instance_infile = jsonlines.open('/Users/valentinapyatkin/PycharmProjects/QuestionGenerationCrossSRL/data/ForPrediction/qasrl_for_prediction_train.jsonl')
+    infile = jsonlines.open(srl_predictions_file_path)
+    instance_infile = jsonlines.open(predict_file_path)
     counter = 0
     for obj, instance in zip(infile, instance_infile):
-        print(obj)
         if len(obj["verbs"])>0:
             for verb in obj["verbs"]:
                 tags = verb["tags"]
@@ -196,11 +110,16 @@ def get_predicted():
                     args_senses.append(target)
                     pred_dict[ID].append(args_senses)
             counter += 1
-            #print(counter)
-    print('DONE')
     return pred_dict
 
-pred_dict = get_predicted()
-align_with_qasrl(pred_dict)
-#srl_parse_and_align_pavel_format()
-#read_and_extract_qasrl_pavel_format()
+if __name__ == "__main__":
+    # path to the predictions made by the verbal SRL model
+    srl_predictions_file_path = ''
+    # path to the input file when doing the predictions with the verbal SRL model
+    predict_file_path = ''
+    # desired output path
+    outfile_path = ''
+    # path to QASRL data
+    infile_path = ''
+    pred_dict = get_predicted(srl_predictions_file_path, predict_file_path)
+    align_with_qasrl(pred_dict, outfile_path, infile_path)

@@ -4,7 +4,6 @@ from collections import defaultdict
 import spacy
 import csv
 import re
-import sys
 nlp = spacy.load('en_core_web_sm')
 
 
@@ -30,7 +29,7 @@ def check_for_alignment(qa_index, target_index, arg, answer):
     else:
         return False
 
-def align_with_qanom_pavel_format(pred_dict, outfile_path, files):
+def align_with_qanom(pred_dict, outfile_path, files):
     outfile = codecs.open(outfile_path, 'w')
     outfile.write('text\tquestion\tgold_answers\tgold_answer_spans\tdoc_id\tpredicate\tpredicate_span\tpredicate_lemma\tverbal_form\tmodel_target\tmodel_target_idx\tmodel_argument\trole_type\tsrl\n')
     counter = 0
@@ -120,8 +119,11 @@ def get_predicted(srl_predictions_file_path):
     return pred_dict
 
 if __name__ == "__main__":
+    # path to the predictions made by the nominal SRL model
     srl_predictions_file_path = ''
+    # desired output path
     outfile_path = ''
+    # path to QASRL files
     files = []
     pred_dict = get_predicted(srl_predictions_file_path)
-    align_with_qanom_pavel_format(pred_dict, outfile_path, files)
+    align_with_qanom(pred_dict, outfile_path, files)

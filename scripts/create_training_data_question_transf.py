@@ -1,16 +1,10 @@
 import codecs
 import spacy
-import math
 import random
-from collections import defaultdict
-#from qanom.candidate_extraction.prepare_qanom_prompts import get_verb_forms_from_lexical_resources
-import random
-# sentence role predicate (verbal infinitive)   : question (two options: role name or role description...)
-# QASRL / QANOM
+
 nlp = spacy.load("en_core_web_sm")
 
 import pandas as pd
-import re
 
 def load_frames(frame_path):
     frames = pd.read_csv(frame_path, sep="\t")
@@ -25,12 +19,10 @@ def load_frames(frame_path):
     return frame_to_desc
 
 
-def create_data_other_format():
-    question_file = '/Users/valentinapyatkin/PycharmProjects/CrossSRL/Data/QASRL/qasrl_qanom.filled.dev.tsv'
-
+def create_data_for_question_transformation(question_file, split):
     # ID pred arg : ok
-    source_file = codecs.open('question_transformation/val.source', 'w')
-    target_file = codecs.open('question_transformation/val.target', 'w')
+    source_file = codecs.open(split+'.source', 'w')
+    target_file = codecs.open(split+'.target', 'w')
 
     for file_numb, file in enumerate([question_file]):
         input_file = pd.read_csv(file, sep='\t')
@@ -54,13 +46,14 @@ def create_data_other_format():
                 predicate_lemma = ''
                 for token in doc:
                     predicate_lemma = token.lemma_
-                # sentence_predicate_marked proto_question predicate_lemma
-                # julian_question
                 source_file.write(' '.join(marked_sentence) + ' </s> ' + predicate_lemma + ' [SEP] ' + proto_question +'\n')
-                print(filled_question)
                 target_file.write(filled_question + '\n')
     source_file.close()
     target_file.close()
 
-
-create_data_other_format()
+if __name__ == "__main__":
+    #File path to the train and dev questions: (qasrl_qanom.filled.dev.tsv)
+    question_file_dev = ''
+    question_file_train = ''
+    create_data_for_question_transformation(question_file=question_file_dev, split='val')
+    create_data_for_question_transformation(question_file=question_file_train, split='train')

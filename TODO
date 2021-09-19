@@ -1,13 +1,18 @@
 PAUL
-/Users/valentinapyatkin/PycharmProjects/RoleQGeneration/prototypes/calc_prototype_accuracy.py
-/Users/valentinapyatkin/PycharmProjects/RoleQGeneration/prototypes/normalize_qasrl_questions.py
-/Users/valentinapyatkin/PycharmProjects/RoleQGeneration/QAModels
+prototypes/calc_prototype_accuracy.py
+prototypes/normalize_qasrl_questions.py
+QAModels
 syn-qg
-/Users/valentinapyatkin/PycharmProjects/RoleQGeneration/MTurk/WebInterface
+MTurk/WebInterface
+MTurk/DataScripts/consolidate_synqg.py
+MTurk/DataScripts/parse_mturk_results.py
+
 
 VALENTINA
-/Users/valentinapyatkin/PycharmProjects/RoleQGeneration/QuestionAlignment/align_QANOM.py
-/Users/valentinapyatkin/PycharmProjects/RoleQGeneration/QuestionAlignment/align_QASRL.py
-/Users/valentinapyatkin/PycharmProjects/RoleQGeneration/scripts/create_training_data_question_transf.py
+QuestionAlignment/align_QANOM.py - done
+QuestionAlignment/align_QASRL.py - done
+scripts/create_training_data_question_transf.py - done
 Analysis Scripts
 Anonymized ACE annotations
+add catvar back to resources?
+BARTTransformation/BART_grammar_correction.py
