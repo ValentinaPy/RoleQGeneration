@@ -6,6 +6,15 @@ import csv
 from collections import defaultdict
 from question_translation import QuestionTranslator
 from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
+import os
+
+if __name__ == "__main__":
+    import sys
+    full_path = os.path.realpath(__file__)
+    cross_srl_dir = os.path.dirname(os.path.dirname(full_path))
+    print("Black magic with python modules!")
+    print(cross_srl_dir)
+    sys.path.insert(0, cross_srl_dir)
 
 transformation_model_path = '/home/nlp/pyatkiv/workspace/transformers/examples/seq2seq/question_transformation_grammar_corrected_who/'
 device_number = 0
