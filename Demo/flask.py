@@ -89,14 +89,16 @@ class RoleQDemo:
         questions_list = []
         samples = []
         protos = []
+        roles = []
         for role in all_roles:
-            print(role)
             proto_question = proto_dict[lemma+sense_id+role.role_type]
-            protos.append(proto_question)
-            samples.append(
-                {'proto_question': proto_question, 'predicate_lemma': lemma,
-                 'predicate_span': predicate_span,
-                 'text': text})
+            if proto_question != '':
+                protos.append(proto_question)
+                samples.append(
+                    {'proto_question': proto_question, 'predicate_lemma': lemma,
+                     'predicate_span': predicate_span,
+                     'text': text})
+                roles.append(role)
         contextualized_questions = q_translator.predict(samples)
         for question, role, proto in zip(contextualized_questions, all_roles, protos):
             questions_list.append({"role_type": role, "questions": [{"prototype": proto, "contextualized":question}]})
