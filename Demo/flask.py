@@ -1,4 +1,4 @@
-
+import os
 if __name__ == "__main__":
     import sys
     full_path = os.path.realpath(__file__)
@@ -15,7 +15,6 @@ import csv
 from collections import defaultdict
 from question_translation import QuestionTranslator
 from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
-import os
 
 transformation_model_path = '/home/nlp/pyatkiv/workspace/transformers/examples/seq2seq/question_transformation_grammar_corrected_who/'
 device_number = 0
