@@ -83,7 +83,8 @@ class RoleQDemo:
             all_role_sets_output[role.sense_id]={"roleset_desc": role.role_set_desc, "lemma": role.predicate, "pos": role.pos, "sense_id": role.sense_id}
         return all_role_sets_output.values()
 
-    def get_questions(self, lemma: str, pos: str, sense_id: str, predicate_idx: int, text: str) -> List:
+    def get_questions(self, lemma: str, pos: str, sense_id: str, predicate_idx: int, tokens: List[str]) -> List:
+        text = ' '.join(tokens)
         all_roles = lex.get_roleset(lemma, sense_id, pos)
         predicate_span = str(predicate_idx)+':'+str(predicate_idx+1)
         questions_list = []
@@ -105,11 +106,21 @@ class RoleQDemo:
         print(questions_list)
         return questions_list
 
+    def generate(self, prototype: str, predicate_idx: int, tokens: List[str], lemma: str) -> str:
+        predicate_span = str(predicate_idx) + ':' + str(predicate_idx + 1)
+        text = ' '.join(tokens)
+        samples = [{'proto_question': prototype, 'predicate_lemma': lemma,
+                    'predicate_span': predicate_span,
+                     'text': text}]
+        contextualized_question = q_translator.predict(samples)[0]
+        return contextualized_question
+
 def main():
     roleqdemo = RoleQDemo()
     roleqdemo.analyze('John sold a pen to Mary.')
     roleqdemo.get_rolesets(1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], ['NOUN', 'VERB'])
-    roleqdemo.get_questions("sell", "v", "01", 1, "John sold a pen to Mary .")
+    roleqdemo.get_questions("sell", "v", "01", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'])
+    roleqdemo.generate("What sells something?", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], "sell")
 
 if __name__ == "__main__":
     main()
