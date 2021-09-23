@@ -2,7 +2,7 @@ from typing import List
 import sys
 import jsonlines
 
-from qanom.candidate_extraction.prepare_qanom_prompts import get_verb_forms_from_lexical_resources
+from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 
 RoleSet = List[str]
 

@@ -3,6 +3,7 @@ from typing import Tuple, Union, List, Optional
 from dataclasses import dataclass
 import pandas as pd
 from jsonlines import jsonlines
+from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 
 from Demo.role_lexicon.common_types import Role, Predicate
 
@@ -49,7 +50,18 @@ class RoleLexicon:
 
     def get_all_rolesets(self, predicate: str, pos: str) -> Optional[List[Role]]:
         key = f"{predicate}.{pos}"
-        return self.all_rolesets_map.get(key)
+        all_rolsesets = self.all_rolesets_map.get(key)
+        if not all_rolsesets and pos == 'n':
+            new_key = f"{predicate}.v"
+            all_rolsesets = self.all_rolesets_map.get(new_key)
+        if not all_rolsesets and pos == 'n':
+            verbs, found = get_verb_forms_from_lexical_resources(predicate, filter_distant=True)
+            if found:
+                for verb in verbs:
+                    new_key = f"{verb}.v"
+                    if self.all_rolesets_map.get(new_key):
+                        all_rolsesets = self.all_rolesets_map.get(new_key)
+        return all_rolsesets
 
     def get_role(self, predicate: str, sense_id: str, pos: str, role: str) -> Optional[Role]:
         roleset = self.get_roleset(predicate, sense_id, pos)

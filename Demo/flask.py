@@ -14,7 +14,7 @@ from Demo.role_lexicon.role_lexicon import RoleLexicon
 import csv
 from collections import defaultdict
 from question_translation import QuestionTranslator
-#from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
+from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 
 transformation_model_path = '/home/nlp/pyatkiv/workspace/transformers/examples/seq2seq/question_transformation_grammar_corrected_who/'
 device_number = 0
@@ -72,6 +72,13 @@ class RoleQDemo:
             if token.pos_ in ['VERB', 'NOUN'] and lemma in covered_predicates:
                 if token.pos_[0].lower() in covered_predicates[lemma]:
                     indices.append(token.i)
+            elif token.pos_ in ['NOUN']:
+                verbs, found = get_verb_forms_from_lexical_resources(lemma)
+                if found:
+                    for verb in verbs:
+                        if verb in covered_predicates:
+                            indices.append(token.i)
+                            break
         return {"tokens": tokens, "indices": indices, "lemmas": lemmas, "pos": pos}
 
     def get_rolesets(self, selected_idx: int, lemmas: [], pos: []) -> List:
@@ -103,7 +110,6 @@ class RoleQDemo:
         contextualized_questions = q_translator.predict(samples)
         for question, role, proto in zip(contextualized_questions, all_roles, protos):
             questions_list.append({"role_type": role, "questions": [{"prototype": proto, "contextualized":question}]})
-        print(questions_list)
         return questions_list
 
     def generate(self, prototype: str, predicate_idx: int, tokens: List[str], lemma: str) -> str:
@@ -117,10 +123,14 @@ class RoleQDemo:
 
 def main():
     roleqdemo = RoleQDemo()
-    roleqdemo.analyze('John sold a pen to Mary.')
-    roleqdemo.get_rolesets(1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], ['NOUN', 'VERB'])
-    roleqdemo.get_questions("sell", "v", "01", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'])
-    roleqdemo.generate("What sells something?", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], "sell")
-
+    indices = roleqdemo.analyze('John sold a pen to Mary.')
+    print(indices)
+    rolesets = roleqdemo.get_rolesets(1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], ['NOUN', 'VERB'])
+    print(rolesets)
+    questions = roleqdemo.get_questions("sell", "v", "01", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'])
+    print(questions)
+    filled = roleqdemo.generate("What sells something?", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], "sell")
+    print(filled)
+    
 if __name__ == "__main__":
     main()
