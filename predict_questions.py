@@ -2,7 +2,7 @@ import jsonlines
 import csv
 import re
 from collections import defaultdict
-from qanom.candidate_extraction.prepare_qanom_prompts import get_verb_forms_from_lexical_resources
+from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 from srl_as_qa_parser import PropBankRoleFinder
 from question_translation import QuestionTranslator
 from argparse import ArgumentParser
@@ -26,6 +26,7 @@ def get_proto_question_dict():
                 proto_score[row['verb_form'] + sense_id + row['role_type']] = float(row['squad_f1'])
     return proto_dict
 
+
 def get_adjunct_proto_question_dict():
     proto_dict = defaultdict(lambda: '')
     proto_score = defaultdict(lambda: 0)
@@ -42,6 +43,7 @@ def get_adjunct_proto_question_dict():
                 proto_dict[row['role_type']]=row['proto_question']
                 proto_score[row['role_type']] = float(row['squad_f1'])
     return proto_dict
+
 
 def get_adjuncts(q_translator, predicate_lemma, predicate_span, text):
     adjunct_dict = {}
@@ -61,6 +63,7 @@ def get_adjuncts(q_translator, predicate_lemma, predicate_span, text):
     for question, role, role_description in zip(contextualized_questions, roles, role_descriptions):
         adjunct_dict[role+'_'+role_description]=question
     return adjunct_dict
+
 
 def get_questions(infile, outfile, transformation_model_path, device_number, with_adjuncts):
     role_finder = PropBankRoleFinder.from_framefile('/home/nlp/pyatkiv/workspace/CrossSRL/Data/frames.jsonl')
@@ -113,12 +116,12 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
             questions[role+'_'+role_description] = question
         if with_adjuncts:
             adjunct_question_dict = get_adjuncts(q_translator, predicate_lemma, predicate_span, text)
-        outfile.writerow({"sentence":text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
-
+        outfile.writerow({"sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
 
 
 def main(args):
     get_questions(args.infile, args.outfile, args.transformation_model_path, args.device_number, args.with_adjuncts)
+
 
 if __name__ == "__main__":
     ap = ArgumentParser()

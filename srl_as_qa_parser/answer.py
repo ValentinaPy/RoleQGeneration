@@ -4,8 +4,8 @@ import torch
 from torch import nn
 from transformers import PreTrainedTokenizerBase, AutoTokenizer, AutoModelForQuestionAnswering
 
-from QAModels import QuestionAnswerDataset, QuestionAnswerModule
-from QAModels.qa_utils import batch_remove_predicate_indicators
+from qa_models import QuestionAnswerDataset, QuestionAnswerModule
+from qa_models.qa_utils import batch_remove_predicate_indicators
 
 Span = Tuple[int, int]
 

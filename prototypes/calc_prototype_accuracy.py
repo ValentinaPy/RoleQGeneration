@@ -24,9 +24,9 @@ if __name__ == "__main__":
     print(cross_srl_dir)
     sys.path.insert(0, cross_srl_dir)
 
-from BARTTransformation.question_translation import QuestionTranslator, PREDICATE_PLACEHOLDER
-from QAModels import QuestionAnswerModule, QuestionAnswerDataset, calc_score, parse_span
-from qanom.candidate_extraction.prepare_qanom_prompts import get_verb_forms_from_lexical_resources
+from question_translation import QuestionTranslator, PREDICATE_PLACEHOLDER
+from qa_models import QuestionAnswerModule, QuestionAnswerDataset, calc_score, parse_span
+from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 from .normalize_qasrl_questions import load_wiktionary, normalize_question
 
 CORE_ROLES = [f"A{i}" for i in range(6)]

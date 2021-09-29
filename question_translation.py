@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 import torch
 from transformers import PreTrainedModel, PreTrainedTokenizer, BartForConditionalGeneration, BartTokenizer
 
-from QAModels import parse_span
+from qa_models import parse_span
 
 MAX_QUESTION_LENGTH = 30
 MAX_TEXT_LENGTH = 192

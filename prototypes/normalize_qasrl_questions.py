@@ -2,7 +2,7 @@ import os
 
 from tqdm import tqdm
 
-from qanom.candidate_extraction.prepare_qanom_prompts import get_verb_forms_from_lexical_resources
+from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 import pandas as pd
 tqdm.pandas()
 

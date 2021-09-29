@@ -14,5 +14,4 @@ QuestionAlignment/align_QASRL.py - done
 scripts/create_training_data_question_transf.py - done
 Analysis Scripts
 Anonymized ACE annotations
-add catvar back to resources?
 BARTTransformation/BART_grammar_correction.py
