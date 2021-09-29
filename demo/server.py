@@ -3,8 +3,16 @@ from argparse import ArgumentParser
 from flask import Flask, jsonify, send_from_directory, request
 import os
 import spacy
-from demo.roleq_impl import setup_roleqs
 
+if __name__ == "__main__":
+    import sys
+    full_path = os.path.realpath(__file__)
+    cross_srl_dir = os.path.dirname(os.path.dirname(full_path))
+    print("Black magic with python modules!")
+    print(cross_srl_dir)
+    sys.path.insert(0, cross_srl_dir)
+
+from demo.roleq_impl import setup_roleqs
 
 WWWROOT = "wwwroot"
 
@@ -76,8 +84,9 @@ if __name__ == '__main__':
     ap = ArgumentParser()
     ap.add_argument("--device_id", type=int, default=0)
     ap.add_argument("--trans_model", default=default_model_path)
-    ap.add_argument("--proto_path", default="../resources/qasrl.prototype_accuracy.ontonotes.tsv")
-    ap.add_argument("--covered_path", default="files/covered.tsv")
+    ap.add_argument("--proto_path", default="./resources/qasrl.prototype_accuracy.ontonotes.tsv")
+    ap.add_argument("--lex_path", default="./role_lexicon/predicate_roles.ontonotes.tsv")
+
     args = ap.parse_args()
     role_demo = setup_roleqs(args)
     app.roleq = role_demo

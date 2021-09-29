@@ -6,14 +6,6 @@ from argparse import ArgumentParser
 import lemma_utils
 from common_types import Role
 
-if __name__ == "__main__":
-    import sys
-
-    full_path = os.path.realpath(__file__)
-    cross_srl_dir = os.path.dirname(os.path.dirname(full_path))
-    print("Black magic with python modules!")
-    print(cross_srl_dir)
-    sys.path.insert(0, cross_srl_dir)
 
 from typing import Tuple, Union, List, Optional, Dict
 import spacy
@@ -169,11 +161,13 @@ class RoleQDemo:
 
 
 def setup_roleqs(args):
+    print(f"Loading prototype questions from: {args.proto_path}")
     proto_dict, rolesets_df = get_proto_question_dict(args.proto_path)
     # covered_predicates = read_covered_predicates(args.covered_path)
+    print(f"Loading  question translation model from: {args.trans_model}")
     q_translator = QuestionTranslator.from_pretrained(args.trans_model, device_id=args.device_id)
     nlp = spacy.load("en_core_web_sm", exclude=["parser", "ner", "tetxtcat"])  # "tok2vec", "attribute_ruler"])
-    lex = RoleLexicon.from_file('files/predicate_roles.ontonotes.tsv')
+    lex = RoleLexicon.from_file(args.lex_path)
     roleqdemo = RoleQDemo(proto_dict, rolesets_df, lex, q_translator, nlp)
     return roleqdemo
 
@@ -183,8 +177,9 @@ def main():
     ap = ArgumentParser()
     ap.add_argument("--device_id", type=int, default=0)
     ap.add_argument("--trans_model", default=transformation_model_path)
-    ap.add_argument("--proto_path", default="../resources/qasrl.prototype_accuracy.ontonotes.tsv")
-    ap.add_argument("--covered_path", default="files/covered.tsv")
+    ap.add_argument("--proto_path", default="./resources/qasrl.prototype_accuracy.ontonotes.tsv")
+    ap.add_argument("--lex_path", default="./role_lexicon/predicate_roles.ontonotes.tsv")
+
     ap.add_argument("--device_id", type=int, default=0)
     args = ap.parse_args()
 
