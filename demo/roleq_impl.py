@@ -1,4 +1,5 @@
 import itertools
+import logging
 import os
 import pandas as pd
 from argparse import ArgumentParser
@@ -14,6 +15,8 @@ import csv
 from collections import defaultdict
 from question_translation import QuestionTranslator
 from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
+
+logger = logging.getLogger(__file__)
 
 
 def read_covered_predicates(covered_path):
@@ -75,25 +78,6 @@ class RoleQDemo:
             return []
         covered_verbs = list(set(verbs).intersection(self.covered_verb_forms))
         return covered_verbs
-
-    def get_covered_lemma2(self, token) -> Optional[str]:
-        lemma = token.lemma_
-        pos = token.pos_
-        if token.pos_ not in ['VERB', 'NOUN']:
-            return None
-        if lemma in self.covered_verb_forms and pos[0].lower() in self.covered_verb_forms[lemma]:
-            # flight	n	fly_v
-            covered_lemma = self.covered_verb_forms[lemma][pos[0].lower()].split("_")[0]
-            # WHAT HAPPENS IF THE POS IS DIFFERENT
-            return covered_lemma
-        if pos.upper() == "VERB":
-            return None
-        # Convert nouns to their verbalized forms...
-        verbs, found = get_verb_forms_from_lexical_resources(lemma)
-        if not found:
-            return None
-        covered_verbs = list(set(verbs).intersection(self.covered_verb_forms))
-        return next(covered_verbs, None)
 
     def analyze(self, text: str) -> Dict:
         doc = self.nlp(text)
@@ -161,38 +145,39 @@ class RoleQDemo:
 
 
 def setup_roleqs(args):
-    print(f"Loading prototype questions from: {args.proto_path}")
+    logger.info(f"Loading prototype questions from: {args.proto_path}")
     proto_dict, rolesets_df = get_proto_question_dict(args.proto_path)
-    # covered_predicates = read_covered_predicates(args.covered_path)
-    print(f"Loading  question translation model from: {args.trans_model}")
+    logger.info(f"Loading  question translation model from: {args.trans_model}")
     q_translator = QuestionTranslator.from_pretrained(args.trans_model, device_id=args.device_id)
     nlp = spacy.load("en_core_web_sm", exclude=["parser", "ner", "tetxtcat"])  # "tok2vec", "attribute_ruler"])
+    logger.info(f"Loading lexicon from: f{args.lex_path}")
     lex = RoleLexicon.from_file(args.lex_path)
+    logger.info(f"Loaded: {lex.df.shape[0]} roles")
     roleqdemo = RoleQDemo(proto_dict, rolesets_df, lex, q_translator, nlp)
     return roleqdemo
 
 
-def main():
-    transformation_model_path = "/home/nlp/pyatkiv/workspace/transformers/examples/seq2seq/question_transformation_grammar_corrected_who/"
-    ap = ArgumentParser()
-    ap.add_argument("--device_id", type=int, default=0)
-    ap.add_argument("--trans_model", default=transformation_model_path)
-    ap.add_argument("--proto_path", default="./resources/qasrl.prototype_accuracy.ontonotes.tsv")
-    ap.add_argument("--lex_path", default="./role_lexicon/predicate_roles.ontonotes.tsv")
+# def main():
+#     transformation_model_path = "/home/nlp/pyatkiv/workspace/transformers/examples/seq2seq/question_transformation_grammar_corrected_who/"
+#     ap = ArgumentParser()
+#     ap.add_argument("--device_id", type=int, default=0)
+#     ap.add_argument("--trans_model", default=transformation_model_path)
+#     ap.add_argument("--proto_path", default="./resources/qasrl.prototype_accuracy.ontonotes.tsv")
+#     ap.add_argument("--lex_path", default="./role_lexicon/predicate_roles.ontonotes.tsv")
+#
+#     ap.add_argument("--device_id", type=int, default=0)
+#     args = ap.parse_args()
+#
+#     roleqdemo = setup_roleqs(args)
+#     indices = roleqdemo.analyze('John sold a pen to Mary.')
+#     print(indices)
+#     rolesets = roleqdemo.get_rolesets(1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], ['NOUN', 'VERB'])
+#     print(rolesets)
+#     questions = roleqdemo.get_questions("sell", "v", "01", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'])
+#     print(questions)
+#     filled = roleqdemo.generate("What sells something?", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], "sell")
+#     print(filled)
 
-    ap.add_argument("--device_id", type=int, default=0)
-    args = ap.parse_args()
 
-    roleqdemo = setup_roleqs(args)
-    indices = roleqdemo.analyze('John sold a pen to Mary.')
-    print(indices)
-    rolesets = roleqdemo.get_rolesets(1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], ['NOUN', 'VERB'])
-    print(rolesets)
-    questions = roleqdemo.get_questions("sell", "v", "01", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'])
-    print(questions)
-    filled = roleqdemo.generate("What sells something?", 1, ['John', 'sell', 'a', 'pen', 'to', 'Mary'], "sell")
-    print(filled)
-
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

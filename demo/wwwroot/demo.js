@@ -1,3 +1,6 @@
+
+base = document.location.href
+
 function empty_state() {
     return {
         "text": "",
@@ -92,7 +95,7 @@ async function on_apply() {
     the_state.selected_idx = -1
 
     const request_body = {"text": the_state.text};
-    const resp = await fetch("/api/text", prepare_post_options(request_body));
+    const resp = await fetch(base + "/api/text", prepare_post_options(request_body));
     const content = await resp.json();
 
     the_state.tokens = content.tokens;
@@ -137,7 +140,7 @@ async function on_prototype_submit() {
     }
     let req = prepare_post_options(body)
     show_spinner("prototype_spinner")
-    let resp = await fetch("/api/contextualize", req)
+    let resp = await fetch(base +"/api/contextualize", req)
     let content = await resp.json()
     await hide_spinner("prototype_spinner", 500)
     the_state.contextualized_question = content.contextualized_question;
@@ -161,7 +164,7 @@ async function on_predicate_selected(evt) {
         "predicate_idx": selected_idx
     }
 
-    const resp = await fetch("/api/rolesets", prepare_post_options(req_body))
+    const resp = await fetch(base + "/api/rolesets", prepare_post_options(req_body))
     const content = await resp.json()
     the_state.selected_idx = selected_idx;
     the_state.rolesets = content;
@@ -206,7 +209,7 @@ async function on_roleset_selected(evt) {
     }
 
     show_spinner("main_text_spinner")
-    const resp = await fetch("/api/questions", prepare_post_options(request_body))
+    const resp = await fetch(base + "/api/questions", prepare_post_options(request_body))
     const content = await resp.json()
     the_state.questions = content
     await hide_spinner("main_text_spinner", 800);

@@ -1,7 +1,7 @@
 import itertools
 from typing import Union, List, Optional
 import pandas as pd
-from jsonlines import jsonlines
+import logging
 from qanom.candidate_extraction.candidate_extraction import get_verb_forms_from_lexical_resources
 
 from common_types import Role, Predicate
@@ -108,12 +108,10 @@ class RoleLexicon:
     @classmethod
     def from_file(cls, lexicon_path: str) -> 'RoleLexicon':
         if lexicon_path.endswith(".tsv"):
+
             df = pd.read_csv(lexicon_path, sep="\t")
             roles = df.to_dict(orient="records")
             return cls(roles)
-        if lexicon_path.endswith(".jsonl"):
-            list(jsonlines.open(lexicon_path))
-            return cls()
         else:
             raise NotImplementedError(f"unrecognized extension: {lexicon_path}")
 

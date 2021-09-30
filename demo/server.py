@@ -3,6 +3,8 @@ from argparse import ArgumentParser
 from flask import Flask, jsonify, send_from_directory, request
 import os
 import spacy
+import logging
+
 
 if __name__ == "__main__":
     import sys
@@ -15,14 +17,17 @@ if __name__ == "__main__":
 from demo.roleq_impl import setup_roleqs
 
 WWWROOT = "wwwroot"
+# logging.basicConfig(filename='roleqs.log', level=logging.DEBUG,
+#                     format='%(asctime)s - %(name)s - %(threadName)s -  %(levelname)s - %(message)s')
 
 
 def setup():
     the_app = Flask(__name__, static_folder=WWWROOT)
     the_app.nlp = spacy.load("en_core_web_sm")
     os.environ['FLASK_ENV'] = "development"
-    the_app.logger.info(os.getcwd())
-    the_app.logger.info(the_app.root_path)
+    the_app.logger.info(f"Current Working Directory: {os.getcwd()}")
+    the_app.logger.info(f"Root Path: {the_app.root_path}")
+    the_app.logger.info(f"Root Path: {the_app.root_path}")
     return the_app
 
 
