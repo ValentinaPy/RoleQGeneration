@@ -63,7 +63,9 @@ def get_adjuncts(q_translator, predicate_lemma, predicate_span, text):
             {'proto_question': proto_question, 'predicate_lemma': predicate_lemma, 'predicate_span': predicate_span,
              'text': text})
     contextualized_questions = q_translator.predict(samples)
+    print(contextualized_questions)
     for question, role, role_description in zip(contextualized_questions, roles, role_descriptions):
+        print(question)
         adjunct_dict[role+'_'+role_description]=question
     return adjunct_dict
 
