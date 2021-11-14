@@ -71,7 +71,6 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
     q_translator = QuestionTranslator.from_pretrained(transformation_model_path, device_id=device_number)
 
     proto_dict = get_proto_question_dict()
-    #fieldnames = ['doc_id', 'sent_id', 'questions', 'roles', "predicate_span", 'text', "role_descriptions", "target_pos", "predicate_sense", "target_lemma", "sentence", "target_idx", "adjunct_questions"]
     outfile = jsonlines.open(outfile, mode='w')
 
     infile = jsonlines.open(infile)
@@ -116,7 +115,7 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
         adjunct_question_dict = {}
         if with_adjuncts:
             adjunct_question_dict = get_adjuncts(q_translator, predicate_lemma, predicate_span, text)
-        outfile.write({"sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
+        outfile.write({"id": id, "sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
 
 
 def main(args):
