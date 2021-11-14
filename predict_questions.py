@@ -73,7 +73,6 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
     proto_dict = get_proto_question_dict()
     #fieldnames = ['doc_id', 'sent_id', 'questions', 'roles', "predicate_span", 'text', "role_descriptions", "target_pos", "predicate_sense", "target_lemma", "sentence", "target_idx", "adjunct_questions"]
     outfile = jsonlines.open(outfile, mode='w')
-    outfile.writeheader()
 
     infile = jsonlines.open(infile)
     for row in infile:
