@@ -82,7 +82,7 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
         predicate_index = row["target_idx"]
         predicate_span = str(row["target_idx"])+':'+str(row["target_idx"]+1)
         predicate_lemma = row["target_lemma"]
-        predicate_sense = row["predicate_sense"]
+        predicate_sense = str(row["predicate_sense"])
         # get roles and role descriptions
         the_roles = role_finder.get_roles(predicate_lemma, pos=pos,sense=int(predicate_sense))
         questions = {}
