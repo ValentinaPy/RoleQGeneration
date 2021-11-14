@@ -50,8 +50,11 @@ def get_adjuncts(q_translator, predicate_lemma, predicate_span, text):
     proto_dict_adjuncts = get_adjunct_proto_question_dict()
     roles = ['AM-LOC', 'AM-MNR', 'AM-CAU', 'AM-EXT', 'AM-GOL']
     role_descriptions = ['Location', 'Manner', 'Causal', 'Extent', 'Goal']
+    print(proto_dict_adjuncts)
     for role in roles:
+        print(role)
         proto_question = proto_dict_adjuncts[role]
+        print(proto_question)
         proto_question = re.sub('<PLACEHOLDER>', predicate_lemma, proto_question)
         if proto_question == '':
             pass
