@@ -71,7 +71,7 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
     q_translator = QuestionTranslator.from_pretrained(transformation_model_path, device_id=device_number)
 
     proto_dict = get_proto_question_dict()
-    fieldnames = ['doc_id', 'sent_id', 'questions', 'roles', "predicate_span", 'text', "role_descriptions"]
+    fieldnames = ['doc_id', 'sent_id', 'questions', 'roles', "predicate_span", 'text', "role_descriptions", "target_pos", "predicate_sense", "target_lemma", "sentence", "target_idx", "adjunct_questions"]
     outfile = csv.DictWriter(open(outfile, 'w'), fieldnames=fieldnames)
     outfile.writeheader()
 
