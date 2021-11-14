@@ -75,6 +75,7 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
 
     infile = jsonlines.open(infile)
     for row in infile:
+        instance_id = row["id"]
         text = row["sentence"]
         pos = row["target_pos"]
         predicate_index = row["target_idx"]
@@ -115,7 +116,7 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
         adjunct_question_dict = {}
         if with_adjuncts:
             adjunct_question_dict = get_adjuncts(q_translator, predicate_lemma, predicate_span, text)
-        outfile.write({"id": id, "sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
+        outfile.write({"id": instance_id, "sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
 
 
 def main(args):
