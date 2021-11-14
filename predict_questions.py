@@ -79,8 +79,8 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
     for row in infile:
         text = row["sentence"]
         pos = row["target_pos"]
-        predicate_index = row["target_index"]
-        predicate_span = str(row["target_index"])+':'+str(row["target_index"]+1)
+        predicate_index = row["target_idx"]
+        predicate_span = str(row["target_idx"])+':'+str(row["target_idx"]+1)
         predicate_lemma = row["target_lemma"]
         predicate_sense = row["predicate_sense"]
         # get roles and role descriptions

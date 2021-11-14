@@ -1,7 +1,7 @@
 
 # Role Questions
 This repository contains the official implementation of the method described in: [Asking It All: Generating Contextualized Questions for Any Semantic Role](http://https://aclanthology.org/2021.emnlp.XXXX)
-by @ValentinaPy (BIU) @plroit (BIU), @julianmichael (UW) [Reut Tsarfati](https://nlp.biu.ac.il/~rtsarfaty/) (BIU) [Yoav Goldberg](https://u.cs.biu.ac.il/~yogo/) (BIU, AI2) and [Ido Dagan](https://u.cs.biu.ac.il/~dagani/) (BIU) 
+by [Valentina Pyatkin](https://valentinapy.github.io), @plroit (BIU), [Julian Michael](https://julianmichael.org), [Reut Tsarfaty](https://nlp.biu.ac.il/~rtsarfaty/) (BIU) [Yoav Goldberg](https://u.cs.biu.ac.il/~yogo/) (BIU, AI2) and [Ido Dagan](https://u.cs.biu.ac.il/~dagani/) (BIU) 
 
 Paper Abstract:
 > Asking questions about a situation is an inherent step towards understanding it. 
