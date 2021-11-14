@@ -50,22 +50,17 @@ def get_adjuncts(q_translator, predicate_lemma, predicate_span, text):
     proto_dict_adjuncts = get_adjunct_proto_question_dict()
     roles = ['AM-LOC', 'AM-MNR', 'AM-CAU', 'AM-EXT', 'AM-GOL']
     role_descriptions = ['Location', 'Manner', 'Causal', 'Extent', 'Goal']
-    print(proto_dict_adjuncts)
+    samples = []
     for role in roles:
-        print(role)
         proto_question = proto_dict_adjuncts[role]
-        print(proto_question)
         proto_question = re.sub('<PLACEHOLDER>', predicate_lemma, proto_question)
         if proto_question == '':
             pass
-        samples = []
         samples.append(
             {'proto_question': proto_question, 'predicate_lemma': predicate_lemma, 'predicate_span': predicate_span,
              'text': text})
     contextualized_questions = q_translator.predict(samples)
-    print(contextualized_questions)
     for question, role, role_description in zip(contextualized_questions, roles, role_descriptions):
-        print(question)
         adjunct_dict[role+'_'+role_description]=question
     return adjunct_dict
 
