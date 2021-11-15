@@ -1,7 +1,7 @@
 
 # Role Questions
 This repository contains the official implementation of the method described in: [Asking It All: Generating Contextualized Questions for Any Semantic Role](http://https://aclanthology.org/2021.emnlp.XXXX)
-by [Valentina Pyatkin](https://valentinapy.github.io), @plroit (BIU), [Julian Michael](https://julianmichael.org), [Reut Tsarfaty](https://nlp.biu.ac.il/~rtsarfaty/) (BIU) [Yoav Goldberg](https://u.cs.biu.ac.il/~yogo/) (BIU, AI2) and [Ido Dagan](https://u.cs.biu.ac.il/~dagani/) (BIU) 
+by [Valentina Pyatkin](https://valentinapy.github.io) (BIU), [Paul Roit](https://paulroit.com) (BIU), [Julian Michael](https://julianmichael.org), [Reut Tsarfaty](https://nlp.biu.ac.il/~rtsarfaty/) (BIU, AI2) [Yoav Goldberg](https://u.cs.biu.ac.il/~yogo/) (BIU, AI2) and [Ido Dagan](https://u.cs.biu.ac.il/~dagani/) (BIU) 
 
 Paper Abstract:
 > Asking questions about a situation is an inherent step towards understanding it. 
@@ -29,6 +29,9 @@ Given the source sentence and the target role, we would like to create the follo
 
 This work relies on a semantic ontology to list and identify all semantic roles, and is implemented on top of [PropBank](https://github.com/propbank/).
 
+If you simply want to predict questions using our method, check the installation requirements and the "Easy Way to Predict Role Questions" section.
+For reproducibility reasons we also detail how to obtain various steps of our pipeline (you don't need to follow these if you only want to use the model for inference).
+
 ## Installation Requirements:
 The following python libraries are required:
  - pytorch
@@ -36,9 +39,20 @@ The following python libraries are required:
  - transformers
  - allennlp
 This project uses data and code from: the [QA based Nominal SRL project](https://github.com/kleinay/QANom) 
-This project (QANom) has to be either installed with pip (TBD) or downloaded and put the qanom directory as a sub-folder of the Role-Questions main folder.
+This project (QANom) can be installed with pip (pip install qanom).
 
-** A more standard method of installation (through pip, with versioned dependencies) will be provided later. **
+## Easy Way to Predict Role Questions:
+If you just want to predict Role Questions for a given context and predicate(s), you can use a simple script that we prepared.
+You should download and unzip the [contextualizer model](https://nlp.biu.ac.il/~pyatkiv/roleqsmodels/question_transformation_grammar_corrected_who.tar.gz) .
+To run the script you can use the following command: 
+> python predict_questions.py --infile <INPUT_FILE_PATH> --outfile <OUTPUT_FILE_PATH> --transformation_model_path <PATH_TO_DOWNLOADED_CONTEXTUALIZER_MODEL> --device_number <NUMBER_OF_CUDA_DEVICE> --with_adjuncts <TRUE or FALSE>
+
+The input file should be a jsonl file (check debug_file.jsonl for an example), containing the following information: an instance id (id),
+the sentence the target predicate appears in (sentence), the target index of the predicate in the sentence (target_idx), the target lemma (target_lemma),
+the POS of the target (target_pos), the predicate sense in terms of OntoNotes (predicate_sense). Our model works best with disambiguated predicate senses
+in terms of OntoNotes, so if you have a predicate disambiguation system or gold sense information please include it. Otherwise you could simply choose the first
+sense by putting 1 in that field, with some performance tradeoffs.
+
 
 ## Data Dependencies
 The following datasets are required in-order to re-create our data and evaluation. 
@@ -134,30 +148,19 @@ The following will take in sentences and output the same sentences with their de
 
 
 #### Training Nominal SRL Parser using NomBank Data
-TODO @pyatkiv  
-> allennlp train ...
+To train our nominal SRL parser we use (and adjust) the following [config file from AllenNLP] (https://github.com/allenai/allennlp-models/blob/main/training_config/structured_prediction/bert_base_srl.jsonnet).
 
 
-#### Predicting PropBank labels for QA-SRL and QA-Nom, Predicting questions for OntoNotes
-TODO @pyatkiv
-This step has multiple stages:
- - Predicting (verbal) SRL arguments on QA-SRL data
- > allennlp predict
-
- - Predicting (nominal) SRL arguments on QA-Nom data
-  > allennlp predict ....
- 
- - Predicting QA-SRL questions for gold (verbal) SRL arguments:
-  > allennlp predict ....
+#### Predicting questions for OntoNotes
+We predict questions for OntoNotes by using the question generation part of the [QA-SRL model of Fitzgerald et al.] (https://github.com/nafitzgerald/nrl-qasrl).
 
 
 #### Aligning Predicted SRL arguments with QA-SRL question answer pairs.
-TODO @pyatkiv
  - Aligning annotated QA-SRL question-answer pairs with predicted (verbal) SRL spans and labels
-  > python ....
+  > python align_QASRL.py
 
  - Aligning annotated QA-Nom question-answer pairs with predicated (nominal) SRL spans and labels
-  > python ....
+  > python align_QANOM.py
 
 
 #### Merging and Unifying and further Processing QA-SRL datasets.
@@ -174,13 +177,10 @@ TODO @plroit
 
 #### Preparing Training Data
 This step creates source and target training files for the seq2seq model employed by the contextualizer.
-TODO @pyatkiv
-> python ..... 
+> python ./bart_transformation/create_training_data_question_transf.py
 
 #### Running the Training Process
-TODO @pyatkiv, @plroit - NOTE to val: The training code for the contextualizer should be imported into our codebase, 
-lets not direct for huggingface legacy examples with seq2seq training
-> python seq2seq ....
+We trained the contextualizer using Huggingface's [BART seq2seq implementation (legacy)](https://github.com/huggingface/transformers/tree/master/examples/legacy/seq2seq).
 
 ## Running Prototype Selector
 This step may run for a long time, it is designed to run on parallel on 10 nodes
@@ -192,10 +192,6 @@ TODO @plroit
 > ... 
 > python ./prototypes/calc_prototype_accuracy.py --index 9
 > python ./prototypes/calc_prototype_accuracy.py --merge_all
-
-
-## Inference for New Text Examples
-@plroit
 
 
 
