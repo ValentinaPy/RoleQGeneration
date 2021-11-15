@@ -148,11 +148,11 @@ The following will take in sentences and output the same sentences with their de
 
 
 #### Training Nominal SRL Parser using NomBank Data
-To train our nominal SRL parser we use (and adjust) the following [config file from AllenNLP] (https://github.com/allenai/allennlp-models/blob/main/training_config/structured_prediction/bert_base_srl.jsonnet).
+To train our nominal SRL parser we use (and adjust) the following [config file from AllenNLP](https://github.com/allenai/allennlp-models/blob/main/training_config/structured_prediction/bert_base_srl.jsonnet).
 
 
 #### Predicting questions for OntoNotes
-We predict questions for OntoNotes by using the question generation part of the [QA-SRL model of Fitzgerald et al.] (https://github.com/nafitzgerald/nrl-qasrl).
+We predict questions for OntoNotes by using the question generation part of the [QA-SRL model of Fitzgerald et al.](https://github.com/nafitzgerald/nrl-qasrl).
 
 
 #### Aligning Predicted SRL arguments with QA-SRL question answer pairs.
