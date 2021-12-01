@@ -43,7 +43,7 @@ This project (QANom) can be installed with pip (pip install qanom).
 
 ## Easy Way to Predict Role Questions:
 If you just want to predict Role Questions for a given context and predicate(s), you can use a simple script that we prepared.
-You should download and unzip the [contextualizer model](https://nlp.biu.ac.il/~pyatkiv/roleqsmodels/question_transformation_grammar_corrected_who.tar.gz) .
+You should download and unzip the [contextualizer model](https://nlp.biu.ac.il/~pyatkiv/roleqsmodels/question_transformation.tar.gz) .
 To run the script you can use the following command: 
 > python predict_questions.py --infile <INPUT_FILE_PATH> --outfile <OUTPUT_FILE_PATH> --transformation_model_path <PATH_TO_DOWNLOADED_CONTEXTUALIZER_MODEL> --device_number <NUMBER_OF_CUDA_DEVICE> --with_adjuncts <TRUE or FALSE>
 
