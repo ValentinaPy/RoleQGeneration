@@ -34,10 +34,10 @@ For reproducibility reasons we also detail how to obtain various steps of our pi
 
 ## Installation Requirements:
 The following python libraries are required:
- - pytorch
- - spacy
- - transformers
- - allennlp
+ - torch==1.7.1
+ - spacy==2.3.2
+ - transformers==4.1.1
+ - allennlp==1.2.0rc1
 This project uses data and code from: the [QA based Nominal SRL project](https://github.com/kleinay/QANom) 
 This project (QANom) can be installed with pip (pip install qanom).
 
