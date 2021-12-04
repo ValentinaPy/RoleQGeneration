@@ -66,7 +66,7 @@ def get_adjuncts(q_translator, predicate_lemma, predicate_span, text):
 
 
 def get_questions(infile, outfile, transformation_model_path, device_number, with_adjuncts):
-    role_finder = PropBankRoleFinder.from_framefile('role_lexicon/frames.jsonl')
+    role_finder = PropBankRoleFinder.from_framefile('role_lexicon/frames.ontonotes.jsonl')
     #Generating Question Transformation
     q_translator = QuestionTranslator.from_pretrained(transformation_model_path, device_id=device_number)
 
