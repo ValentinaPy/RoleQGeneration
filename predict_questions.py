@@ -68,7 +68,7 @@ def get_adjuncts(q_translator, predicate_lemma, predicate_span, text):
 def get_questions(infile, outfile, transformation_model_path, device_number, with_adjuncts):
     role_finder = PropBankRoleFinder.from_framefile('role_lexicon/frames.jsonl')
     #Generating Question Transformation
-    q_translator = QuestionTranslator.from_pretrained(transformation_model_path, device_id=device_number)
+    q_translator = QuestionTranslator.from_pretrained(transformation_model_path, device_id=int(device_number))
 
     proto_dict = get_proto_question_dict()
     outfile = jsonlines.open(outfile, mode='w')
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     ap.add_argument("--infile", help="debug_file.jsonl")
     ap.add_argument("--outfile", help="name of the file you want to write the question to (jsonl format)")
     ap.add_argument("--transformation_model_path")
-    ap.add_argument("--device_number", default=0)
+    ap.add_argument("--device_number", default="0")
     ap.add_argument("--with_adjuncts", default=False)
 
     main(ap.parse_args())
