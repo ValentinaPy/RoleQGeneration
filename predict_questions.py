@@ -109,8 +109,8 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
                     {'proto_question': proto_question, 'predicate_lemma': predicate_lemma,
                      'predicate_span': predicate_span,
                      'text': text})
-        #contextualize the questions
         print(samples)
+        #contextualize the questions
         contextualized_questions = q_translator.predict(samples)
         for question, role, role_description in zip(contextualized_questions, roles, role_descriptions):
             questions[role+'_'+role_description] = question
