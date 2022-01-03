@@ -109,15 +109,20 @@ def get_questions(infile, outfile, transformation_model_path, device_number, wit
                     {'proto_question': proto_question, 'predicate_lemma': predicate_lemma,
                      'predicate_span': predicate_span,
                      'text': text})
-        print(samples)
-        #contextualize the questions
-        contextualized_questions = q_translator.predict(samples)
-        for question, role, role_description in zip(contextualized_questions, roles, role_descriptions):
-            questions[role+'_'+role_description] = question
-        adjunct_question_dict = {}
-        if with_adjuncts:
-            adjunct_question_dict = get_adjuncts(q_translator, predicate_lemma, predicate_span, text)
-        outfile.write({"id": instance_id, "sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
+        if samples == []:
+            outfile.write(
+                {"id": instance_id, "sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma,
+                 "target_pos": pos, "predicate_sense": predicate_sense, "questions": "PREDICATE IS NOT IN ROLE ONTOLOGY",
+                 "adjunct_questions": "PREDICATE IS NOT IN ROLE ONTOLOGY"})
+        else:
+            #contextualize the questions
+            contextualized_questions = q_translator.predict(samples)
+            for question, role, role_description in zip(contextualized_questions, roles, role_descriptions):
+                questions[role+'_'+role_description] = question
+            adjunct_question_dict = {}
+            if with_adjuncts:
+                adjunct_question_dict = get_adjuncts(q_translator, predicate_lemma, predicate_span, text)
+            outfile.write({"id": instance_id, "sentence": text, "target_idx": predicate_index, "target_lemma": predicate_lemma, "target_pos": pos, "predicate_sense": predicate_sense, "questions": questions, "adjunct_questions":adjunct_question_dict})
 
 
 def main(args):
