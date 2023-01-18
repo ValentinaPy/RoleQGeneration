@@ -9,7 +9,7 @@ from torch.optim.adamw import AdamW
 import logging
 
 from pytorch_lightning.utilities import rank_zero_only
-from pytorch_lightning.loggers import LightningLoggerBase
+from pytorch_lightning.loggers.logger import Logger
 
 from qa_models.qa_utils import find_offset_index, get_token_offsets, \
     find_text_start_end_indices
@@ -369,5 +369,5 @@ class SimpleTextLogger:
         self.logger.info(data)
 
     @classmethod
-    def from_logger(cls, logger: LightningLoggerBase):
+    def from_logger(cls, logger: Logger):
         return cls(logger.log_dir)
